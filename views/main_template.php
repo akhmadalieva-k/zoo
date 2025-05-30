@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zoopark</title>
+    <style>
+        .container__main {
+            display: flex;
+            border: 5px, solid, darkmagenta;
+            flex-wrap: nowrap;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .container__header {
+            display: flex;
+            border: 3px, solid, black;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            flex-direction: row;
+            width: 100%;
+        }
+
+        .container__body {
+            display: flex;
+            border: 3px, solid, cadetblue;
+            flex-wrap: nowrap;
+            align-items: flex-start;
+            text-align: center;
+            flex-direction: row;
+            width: 100%;
+        }
+
+        .container__options {
+            display: flex;
+            border: 3px, solid, palevioletred;
+            align-items: flex-start;
+            flex-wrap: nowrap;
+            text-align: center;
+            flex-direction: column;
+            width: 20%;
+        }
+
+        .container__table {
+            display: flex;
+            border: 3px, solid, lawngreen;
+            flex-wrap: wrap;
+            align-items: center;
+            text-align: center;
+            flex-direction: row;
+            width: 80%;
+        }
+
+        .checkbox {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .form_element {
+            display: flex;
+            flex-direction: row;
+        }
+        .description_field {
+            width: 500px;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+            border: 1px solid #999;
+            padding: 4px 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        body {
+            font-family: sans-serif;
+            /* padding: 30px; */
+        }
+
+        h1 {
+            text-align: center;
+        }
+        .form__input {
+            display: flex;
+            flex-direction: column;
+            width: 250px;
+        }
+
+        .modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.close-button {
+    float: right;
+    font-size: 24px;
+    cursor: pointer;
+}
+    </style>
+</head>
+<body>
+    <?php include_once(__DIR__ . "/" . $view); ?>
+</body>
+</html>
