@@ -6,12 +6,15 @@ use Error;
 
 class Route
 {
-    public static function Start()
+    public static function Start() : void
     {
+        if (preg_match('/\.(ico|png|jpg|jpeg|css|js|svg|woff2?)$/', $_SERVER["REQUEST_URI"])) {
+            return;
+        }
         $route = explode("/", $_SERVER["REQUEST_URI"]);
-        $controllerName = strlen($route[1] > 0) ? $route[1] : "Home";
-        $actionName = strlen($route[2] > 0) ? $route[2] : "Index";
-        $param = strlen($route[3] > 0) ? $route[3] : null;
+        $controllerName = !empty($route[1]) ? $route[1] : "Home";
+        $actionName = !empty($route[2]) ? $route[2] : "Index";
+        $param = !empty($route[3]) ? $route[3] : null;
 
         $controllerClass = "controllers\\" .  ucfirst($controllerName) . "Controller";
         $action = ucfirst($actionName);
@@ -23,8 +26,11 @@ class Route
                     ? $controller->$action($param) 
                     : $controller->$action();
             }
+            else {
+                throw new Error("method not exists");
+            }
         } else {
-            throw new Error("method or controller not exists");
+            throw new Error("controller not exists");
         }
     }
 }

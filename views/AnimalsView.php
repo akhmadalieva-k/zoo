@@ -5,84 +5,38 @@
 //     echo "\n";
 // }
 ?>
-
+<p><a href="http://localhost:84">На главную</a></p>
 <div class="container__main">
     <div class="container__header">
         <h1>zoopark</h1>
+
     </div>
     <div class="container__body">
-        <div class="container__options">
-            <h2>выбрать параметры:</h2>
-            <form action="http://localhost:84/animals/select" method="post">
-                <div class="checkbox">
-                    <label for="class_id">вабрать класс:</label>
-                    <select name="class_id" id="class_id">
-                        <option value="all">показать все</option>
-                        <option value="1">только рыбы</option>
-                        <option value="2">только земноводные</option>
-                        <option value="3">только рептилии</option>
-                        <option value="4">только насекомые</option>
-                        <option value="5">только птицы</option>
-                        <option value="6">только млекопитающие</option>
-                    </select>
-                    <input name="get_selected_animals" type="submit" value="показать">
-                </div>
-            </form>
-            <br>
-            <h2>добавить новое животное:</h2>
-            <form action="http://localhost:84/animals/add" method="post">
-                <div class="form__input">
-                    <label for="species_lat">Видовое название на латыни:</label>
-                    <input type="text" name="value[species_lat]" id="species_lat">
-                    <br>
-                    <label for="species_rus">Видовое название на русском:</label>
-                    <input type="text" name="value[species_rus]" id="species_rus">
-                    <br>
-                    <label for="animal_name">Имя животного (до 100 символов):</label>
-                    <input type="text" name="value[animal_name]" id="animal_name">
-                    <br>
-                    <label for="class_id">Класс животного:</label>
-                    <select name="value[class_id]" id="class_id">
-                        <option value="1">рыбы</option>
-                        <option value="2">земноводные</option>
-                        <option value="3">рептилии</option>
-                        <option value="4">насекомые</option>
-                        <option value="5">птицы</option>
-                        <option value="6">млекопитающие</option>
-                    </select>
-                    <br>
-                    <label for="sex">Пол животного:</label>
-                    <select name="value[sex]" id="sex">
-                        <option value="м">мужской</option>
-                        <option value="ж">женский</option>
-                    </select>
-                    <br>
-                    <label for="birth_date">Дата рождения:</label>
-                    <input type="date" name="value[birth_date]" id="birth_date">
-                    <br>
-                    <label for="arrival_date">Дата прибытия в зоопарк:</label>
-                    <input type="date" name="value[arrival_date]" id="arrival_date">
-                    <br>
-                    <label for="color">Цвет животного:</label>
-                    <input type="text" name="value[color]" id="color">
-                    <br>
-                    <label for="conservation_status_id">Охранный статус:</label>
-                    <select name="value[conservation_status_id]" id="conservation_status_id">
-                        <option value="1">Исчезнувший в дикой природе</option>
-                        <option value="2">Находится на грани исчезновения</option>
-                        <option value="3">Уязвимый</option>
-                        <option value="4">Не имеет охранного статуса</option>
-                    </select>
-                    <br>
-                    <label for="animal_description">Краткое описание животного:</label>
-                    <input type="text" name="value[animal_description]" id="animal_description">
-                    <br>
-                    <input name="add_animal" type="submit" value="add_animal">
-                </div>
-            </form>
-        </div>
         <div class="container__table">
-            <h1>Список всех животных зооопарка 🐾</h1>
+            <div class="container__table__head">
+                <div class="container__table__options">
+                    <h1>Список всех животных зооопарка 🐾</h1>
+                    <div class="container__select__class">
+                        <!-- <h3>выбрать параметры:</h3> -->
+                        <form action="http://localhost:84/animals/select" method="post">
+                            <div class="checkbox">
+                                <label for="class_id">выбрать класс:</label>
+                                <select name="class_id" id="class_id">
+                                    <option value="all">показать все</option>
+                                    <option value="1">только рыбы</option>
+                                    <option value="2">только земноводные</option>
+                                    <option value="3">только рептилии</option>
+                                    <option value="4">только насекомые</option>
+                                    <option value="5">только птицы</option>
+                                    <option value="6">только млекопитающие</option>
+                                </select>
+                                <input name="get_selected_animals" type="submit" value="показать">
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <button onclick="openAddModal()">➕ Добавить животное</button>
+            </div>
             <?php
             $titles = [
                 "animal_id" => "номер",
@@ -95,7 +49,8 @@
                 "arrival_date" => "дата поступления на содержание",
                 "color" => "цвет",
                 "state" => "охранный статус",
-                "animal_description" => "описание"
+                "animal_description" => "описание",
+                "department_name" => "отдел"
             ]; ?>
             <table>
                 <thead>
@@ -108,23 +63,38 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ($data as $keyArr => $valueArr): ?>
+                    <?php foreach ($data["animals"] as $keyArr => $valueArr): ?>
                         <tr>
                             <?php foreach ($valueArr as $key => $cell): ?>
                                 <!-- <td> -->
-                                    <?php if ($key == "animal_id"): ?>
-                                        <td>
+                                <?php if ($key == "animal_id"): ?>
+                                    <td>
+                                        <?php $id = htmlspecialchars($cell) ?>
                                         <button onclick='openEditModal(<?= json_encode($valueArr, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>)'>
                                             ✏ <?= htmlspecialchars($cell) ?>
                                         </button>
-                                        </td>
-                                    <?php elseif ($key == "class_id" || $key == "birth_date" || $key == "conservation_status_id"):
+                                    </td>
+                                <?php elseif ($key == "animal_name"): ?>
+                                    <td>
+                                        <?php $name = htmlspecialchars($cell); ?>
+                                    <?php echo "<a href='http://localhost:84/page/animal/$id'>$name</a>" ?>
+                                    </td>
+                                <?php elseif ($key == "class_id" || $key == "birth_date" || $key == "conservation_status_id"):
                                     continue; ?>
-                                    <?php else: ?>
+                                <?php elseif ($key == "department_id"): 
+                                    $depRef = htmlspecialchars($cell  ?? '');
+                                    continue; ?>
+                                <?php elseif ($key == "department_name"): ?>
+                                    <?php
+                                        $dep = htmlspecialchars($cell  ?? '');?>
                                         <td>
-                                        <?= htmlspecialchars($cell) ?>
+                                        <?php echo "<a href='http://localhost:84/departments/department/$depRef'>$dep</a>"; ?>
                                         </td>
-                                    <?php endif; ?>
+                                <?php else: ?>
+                                    <td>
+                                        <?php echo htmlspecialchars($cell ?? ''); ?>
+                                    </td>
+                                <?php endif; ?>
                                 <!-- </td> -->
                             <?php endforeach; ?>
                         </tr>
@@ -134,6 +104,73 @@
         </div>
     </div>
 </div>
+
+<div id="addModal" class="modal__add" style="display:none;">
+    <div class="modal-content">
+        <span class="close" onclick="closeAddModal()">&times;</span>
+        <h2>добавить новое животное:</h2>
+        <form action="http://localhost:84/animals/add" method="post">
+            <div class="form__input">
+                <label for="species_lat">Видовое название на латыни:</label>
+                <input type="text" name="value[species_lat]" id="species_lat" required placeholder="Введите видовое название">
+                <br>
+                <label for="species_rus">Видовое название на русском:</label>
+                <input type="text" name="value[species_rus]" id="species_rus" required placeholder="Введите видовое название">
+                <br>
+                <label for="animal_name">Имя животного (до 100 символов):</label>
+                <input type="text" name="value[animal_name]" id="animal_name">
+                <br>
+                <label for="class_id">Класс животного:</label>
+                <select name="value[class_id]" id="class_id">
+                    <option value="1">рыбы</option>
+                    <option value="2">земноводные</option>
+                    <option value="3">рептилии</option>
+                    <option value="4">насекомые</option>
+                    <option value="5">птицы</option>
+                    <option value="6">млекопитающие</option>
+                </select>
+                <br>
+                <label for="sex">Пол животного:</label>
+                <select name="value[sex]" id="sex">
+                    <option value="м">мужской</option>
+                    <option value="ж">женский</option>
+                </select>
+                <br>
+                <label for="birth_date">Дата рождения:</label>
+                <input type="date" name="value[birth_date]" id="birth_date" required placeholder="Введите дату рождения">
+                <br>
+                <label for="arrival_date">Дата прибытия в зоопарк:</label>
+                <input type="date" name="value[arrival_date]" id="arrival_date">
+                <br>
+                <label for="color">Цвет животного:</label>
+                <input type="text" name="value[color]" id="color">
+                <br>
+                <label for="conservation_status_id">Охранный статус:</label>
+                <select name="value[conservation_status_id]" id="conservation_status_id">
+                    <option value="1">Исчезнувший в дикой природе</option>
+                    <option value="2">Находится на грани исчезновения</option>
+                    <option value="3">Уязвимый</option>
+                    <option value="4">Не имеет охранного статуса</option>
+                </select>
+                <br>
+                <label for="animal_description">Краткое описание животного:</label>
+                <input type="text" name="value[animal_description]" id="animal_description">
+                <br>
+                <label for="department_id">Отдел:</label>
+                <select name="value[department_id]" id="department_id" required>
+                <?php foreach ($data["departments"] as $emp): ?>
+                    <option value="<?= htmlspecialchars($emp['department_id']) ?>">
+                        <?= htmlspecialchars($emp['department_name']) ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+                <br>
+                <input name="add_animal" type="submit" value="add_animal">
+            </div>
+        </form>
+    </div>
+</div>
+
 <div id="editModal" class="modal" style="display:none;">
     <div class="modal-content">
         <span class="close-button">&times;</span>
@@ -185,19 +222,24 @@
 
             <label for="edit_animal_description">Описание:</label>
             <input type="text" name="value[animal_description]" id="edit_animal_description"><br>
-
+            <label for="edit_department_id">Отдел:</label>
+                <select name="value[department_id]" id="edit_department_id" required>
+                <?php foreach ($data["departments"] as $emp): ?>
+                    <option value="<?= htmlspecialchars($emp['department_id']) ?>">
+                        <?= htmlspecialchars($emp['department_name']) ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
             <input type="submit" value="Сохранить изменения">
         </form>
         <h2>Удалить животное из базы:</h2>
-    <form action="http://localhost:84/animals/delete" method="post">
-        <div class="form__input">
-        <input type="hidden" name="animal_id" id="delete_animal_id">
-        <!-- <label for="animal_id_to_delete">Индивидуальный номер животного:</label>
-        <input type="animal_id_to_delete" name="animal_id_to_delete" id="delete_animal_id" value="<?= htmlspecialchars($data['animal_id']) ?>" readonly> -->
-        <br>
-        <input name="delete_animal" type="submit" value="delete">
-        </div>
-    </form>
+        <form action="http://localhost:84/animals/delete" method="post">
+            <div class="form__input">
+                <input type="hidden" name="animal_id" id="delete_animal_id">
+              <br>
+                <input name="delete_animal" type="submit" value="delete">
+            </div>
+        </form>
     </div>
 </div>
 <script>
@@ -237,9 +279,26 @@
         document.getElementById("edit_color").value = animal.color;
         document.getElementById("edit_conservation_status_id").value = animal.conservation_status_id;
         document.getElementById("edit_animal_description").value = animal.animal_description;
+        document.getElementById("edit_department_id").value = animal.department_id;
 
         document.getElementById("delete_animal_id").value = animal.animal_id;
 
         modal.style.display = "flex";
+    }
+
+    function openAddModal() {
+        document.getElementById("addModal").style.display = "block";
+    }
+
+    function closeAddModal() {
+        document.getElementById("addModal").style.display = "none";
+    }
+
+    // Закрытие при клике вне окна
+    window.onclick = function(event) {
+        const modal = document.getElementById("addModal");
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
     }
 </script>

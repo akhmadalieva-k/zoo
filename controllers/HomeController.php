@@ -16,15 +16,11 @@ class HomeController extends ControllerBase
         $this->Model = new HomeModel();
     }
 
-    // public function GetData()
-    // {
-    //     $data = $this->Model->GetData();
-    //     $this->Render($data);
-    // }
-
-    // public function GetAnimal(int $id) 
-    // {
-    //     $data = $this->Model->GetAnimal($id);
-    //     $this->Render($data);
-    // }
+    public function Index() : void
+    {
+        $departments = $this->Model->GetDepartments();
+        $headers = array("employees/all" => "сотрудники", "animals/all" => "животные");
+        $data = array('headers' => $headers, 'departments' => $departments);
+        $this->Render($data);
+    }
 }

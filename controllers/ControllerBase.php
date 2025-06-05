@@ -20,9 +20,9 @@ abstract class ControllerBase
         ViewBase::Render($this->ViewName, $data);
     }
 
-    public function Index()
-    {
-        $data = array("departments/all" => "отделы", "employees/all" => "сотрудники", "animals/all" => "животные");
-        $this->Render($data);
-    }
+    // public function Index()
+    // {
+    //     $data = array("departments/all" => "отделы", "employees/all" => "сотрудники", "animals/all" => "животные");
+    //     $this->Render($data);
+    // }
 }

@@ -41,7 +41,7 @@
             flex-wrap: nowrap;
             text-align: center;
             flex-direction: column;
-            width: 20%;
+            /* width: 20%; */
         }
 
         .container__table {
@@ -51,7 +51,45 @@
             align-items: center;
             text-align: center;
             flex-direction: row;
-            width: 80%;
+            width: 100%;
+        }
+        .container__table__head {
+            display: flex;
+            border: 3px, solid, seagreen;
+            flex-wrap: nowrap;
+            align-items: flex-start;
+            text-align: center;
+            flex-direction: row;
+            width: 100%;
+        }
+
+        .container__table__options {
+            display: flex;
+            border: 3px, solid, yellow;
+            flex-wrap: nowrap;
+            align-items: flex-start;
+            text-align: center;
+            flex-direction: column;
+            width: 100%;
+        }
+
+        .container__select__class {
+            display: flex;
+            border: 3px, solid, sandybrown;
+            /* margin-left: 10px; */
+            flex-wrap: wrap;
+            align-items: flex-start;
+            text-align: center;
+            flex-direction: column;
+            width: 40%;
+        }
+        .container__page__body {
+            display: flex;
+            border: 3px, solid, pink;
+            flex-wrap: nowrap;
+            align-items: flex-start;
+            text-align: start;
+            flex-direction: column;
         }
 
         .checkbox {
@@ -88,9 +126,9 @@
             /* padding: 30px; */
         }
 
-        h1 {
+        /* h1 {
             text-align: center;
-        }
+        } */
         .form__input {
             display: flex;
             flex-direction: column;
@@ -109,6 +147,19 @@
     align-items: center;
 }
 
+.modal__add {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    padding-top: 50px;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.5);
+}
+
 .modal-content {
     background: white;
     padding: 20px;
@@ -121,6 +172,12 @@
 .close-button {
     float: right;
     font-size: 24px;
+    cursor: pointer;
+}
+
+.close {
+    float: right;
+    font-size: 28px;
     cursor: pointer;
 }
     </style>
