@@ -3,7 +3,10 @@
 namespace controllers;
 
 use controllers\log\Logger;
+use Error;
+use Exception;
 use models\AnimalsModel;
+use views\ViewBase;
 
 
 class AnimalsController extends ControllerBase
@@ -13,79 +16,133 @@ class AnimalsController extends ControllerBase
     public function __construct()
     {
         parent::__construct();
-
         $this->Model = new AnimalsModel();
     }
 
-    public function All() : void
+    public function List(): void
     {
-        $data["departments"] = $this->Model->GetDepartments();
-        $data["animals"] = $this->Model->GetData();
-        $this->Render($data);
+        try {
+            if (!isset($_GET["class"])) {
+                $data["departments"] = $this->Model->GetDepartments();
+                $data["animals"] = $this->Model->GetData();
+                $this->Render($data);
+            } else {
+                if ($_GET["class"] == 0) {
+                    Header('Location: http://localhost:84/animals/list');
+                } else {
+                    $data["animals"] = $this->Model->Select($_GET["class"]);
+                    $this->Render($data);
+                }
+            }
+        } catch (Exception $ex) {
+            Logger::AddErrorLog("animalError", $ex->getMessage());
+        } catch (Error $e) {
+            Logger::AddErrorLog("animalError", $e->getMessage());
+        }
     }
 
-    public function Select() : void
+    public function Add(): void
     {
-        if ($_POST["class_id"] == "all"){
-            Header('Location: http://localhost:84/animals/all');
-        }
-        else {
-        $data["animals"] = $this->Model->Select($_POST["class_id"]);
-        $this->Render($data);
+        try {
+            $params = [
+                $_POST['value']['species_lat'] ?? '',
+                $_POST['value']['species_rus'] ?? '',
+                $_POST['value']['animal_name'] ?? '',
+                (int) ($_POST['value']['class_id'] ?? 0),
+                $_POST['value']['sex'] ?? '',
+                $_POST['value']['birth_date'] ?? '',
+                $_POST['value']['arrival_date'] ?? '',
+                $_POST['value']['color'] ?? null,
+                (int) ($_POST['value']['conservation_status_id'] ?? 0),
+                $_POST['value']['animal_description'] ?? null,
+                (int) ($_POST['value']['department_id'] ?? 0),
+            ];
+            if ($this->Model->Add($params)) {
+                Logger::AddLog("add new animal");
+            }
+            Header('Location: http://localhost:84/animals/list');
+        } catch (Exception $ex) {
+            Logger::AddErrorLog("animalError", $ex->getMessage());
+        } catch (Error $e) {
+            Logger::AddErrorLog("animalError", $e->getMessage());
         }
     }
 
-    public function Add() : void
+    public function Update(): void
     {
-        $params = [
-            'species_lat' => $_POST['value']['species_lat'] ?? '',
-            'species_rus' => $_POST['value']['species_rus'] ?? '',
-            'animal_name' => $_POST['value']['animal_name'] ?? '',
-            'class_id' => (int) ($_POST['value']['class_id'] ?? 0),
-            'sex' => $_POST['value']['sex'] ?? '',
-            'birth_date' => $_POST['value']['birth_date'] ?? '',
-            'arrival_date' => $_POST['value']['arrival_date'] ?? '',
-            'color' => $_POST['value']['color'] ?? null,
-            'conservation_status_id' => (int) ($_POST['value']['conservation_status_id'] ?? 0),
-            'animal_description' => $_POST['value']['animal_description'] ?? null,
-            'department_id' => (int) ($_POST['value']['department_id'] ?? 0),
-        ];
-        if($this->Model->Add($params))
-        {
-            Logger::AddLog("add new animal");
+        try {
+            $values = [
+                $_POST['value']['species_lat'] ?? '',
+                $_POST['value']['species_rus'] ?? '',
+                $_POST['value']['animal_name'] ?? '',
+                (int) ($_POST['value']['class_id'] ?? 0),
+                $_POST['value']['sex'] ?? '',
+                $_POST['value']['birth_date'] ?? '',
+                $_POST['value']['arrival_date'] ?? '',
+                $_POST['value']['color'] ?? null,
+                (int) ($_POST['value']['conservation_status_id'] ?? 0),
+                $_POST['value']['animal_description'] ?? null,
+                (int) ($_POST['value']['department_id'] ?? 0),
+                (int) ($_POST['value']['animal_id']) ?? null,
+            ];
+            if ($this->Model->UpdateAnimal($values)) {
+                Logger::AddLog("change animal");
+            }
+            Header('Location: http://localhost:84/animals/list');
+        } catch (Exception $ex) {
+            Logger::AddErrorLog("animalError", $ex->getMessage());
+        } catch (Error $e) {
+            Logger::AddErrorLog("animalError", $e->getMessage());
         }
-        Header('Location: http://localhost:84/animals/all');
     }
 
-    public function Update() : void
+    public function Delete(): void
     {
-        $values = [
-            'animal_id' => $_POST['value']['animal_id'] ?? null,
-            'species_lat' => $_POST['value']['species_lat'] ?? '',
-            'species_rus' => $_POST['value']['species_rus'] ?? '',
-            'animal_name' => $_POST['value']['animal_name'] ?? '',
-            'class_id' => (int) ($_POST['value']['class_id'] ?? 0),
-            'sex' => $_POST['value']['sex'] ?? '',
-            'birth_date' => $_POST['value']['birth_date'] ?? '',
-            'arrival_date' => $_POST['value']['arrival_date'] ?? '',
-            'color' => $_POST['value']['color'] ?? null,
-            'conservation_status_id' => (int) ($_POST['value']['conservation_status_id'] ?? 0),
-            'animal_description' => $_POST['value']['animal_description'] ?? null,
-            'department_id' => (int) ($_POST['value']['department_id'] ?? 0),
-        ];
-        if($this->Model->UpdateAnimal($values))
-        {
-            Logger::AddLog("change animal");
+        try {
+            if ($this->Model->DeleteAnimal($_POST["animal_id"])) {
+                Logger::AddLog("delete animal");
+            }
+            Header('Location: http://localhost:84/animals/list');
+        } catch (Exception $ex) {
+            Logger::AddErrorLog("animalError", $ex->getMessage());
+        } catch (Error $e) {
+            Logger::AddErrorLog("animalError", $e->getMessage());
         }
-        Header('Location: http://localhost:84/animals/all');
     }
 
-    public function Delete() : void
+    public function AnimalPage(int $animalId): void
     {
-        if($this->Model->DeleteAnimal($_POST["animal_id"]))
-        {
-            Logger::AddLog("delete animal");
+        try {
+            $data["employee_link"] = $this->Model->GetAnimalLink($animalId);
+            $data["animal"] = $this->Model->GetAnimalInfo($animalId);
+            if (isset($data["animal"]["department_id"])) {
+                $data["employee_list"] = $this->Model->GetEmployeeList($data["animal"]["department_id"]);
+            }
+            ViewBase::Render("AnimalPageView.php", $data);
+        } catch (Exception $ex) {
+            Logger::AddErrorLog("animalError", $ex->getMessage());
+        } catch (Error $e) {
+            Logger::AddErrorLog("animalError", $e->getMessage());
         }
-        Header('Location: http://localhost:84/animals/all');
+    }
+
+    public function AddLink(): void
+    {
+        try {
+            $animalId = $_POST["animal_id"];
+            if ($_POST["employee_id"] == 0) {
+                $this->Model->DeleteLink($animalId);
+                Header("Location: http://localhost:84/animals/animalPage/$animalId");
+            } else {
+                $this->Model->AddLink($_POST["employee_id"], $_POST["animal_id"]);
+
+                Logger::AddLog("add row in employee_animal_link");
+                Header("Location: http://localhost:84/animals/animalPage/$animalId");
+            }
+        } catch (Exception $ex) {
+            Logger::AddErrorLog("animalError", $ex->getMessage());
+        } catch (Error $e) {
+            Logger::AddErrorLog("animalError", $e->getMessage());
+        }
     }
 }

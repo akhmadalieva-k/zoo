@@ -1,12 +1,11 @@
 <?php
 
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
+// error_reporting(E_ALL);
+// ini_set('display_errors', 1);
 
-spl_autoload_register(function($className){
+spl_autoload_register(function ($className) {
     $file = __DIR__ . '/' . str_replace('\\', '/', $className) . '.php';
-    if(file_exists($file))
-    {
+    if (file_exists($file)) {
         require $file;
     }
 });
@@ -14,17 +13,12 @@ spl_autoload_register(function($className){
 use controllers\log\Logger;
 use core\Route;
 
-try
-{
+try {
     Route::Start();
-}
-catch (Error $e)
-{
-    Logger::AddErrorLog($e->getMessage());
+} catch (Error $e) {
+    Logger::AddErrorLog("anotherError", $e->getMessage());
     echo "error: " . $e->getMessage();
-}
-catch (Exception $ex)
-{
-    Logger::AddErrorLog($ex->getMessage());
+} catch (Exception $ex) {
+    Logger::AddErrorLog("anotherError", $ex->getMessage());
     echo "exception: " . $ex->getMessage();
 }

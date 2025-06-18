@@ -11,11 +11,11 @@ class Logger
         file_put_contents($logPath, $note, FILE_APPEND);
     }
 
-    public static function AddErrorLog(string $message) : void
+    public static function AddErrorLog(string $filename, string $message) : void
     {
         $date = date('d.m.y H:i:s');
         $note = $date . " " . $message . "\n";
-        $logPath = 'controllers/log/errorLog';
+        $logPath = "controllers/log/errorLog/$filename";
         file_put_contents($logPath, $note, FILE_APPEND);
     }
 

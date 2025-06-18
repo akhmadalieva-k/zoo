@@ -1,6 +1,3 @@
-<?php
-// print_r($data["departments"]);
-?>
 <ul>
     <?php foreach($data['headers'] as $keyH => $valueH):?>
         <li>

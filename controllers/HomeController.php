@@ -19,7 +19,7 @@ class HomeController extends ControllerBase
     public function Index() : void
     {
         $departments = $this->Model->GetDepartments();
-        $headers = array("employees/all" => "сотрудники", "animals/all" => "животные");
+        $headers = array("employees/list" => "сотрудники", "animals/list" => "животные");
         $data = array('headers' => $headers, 'departments' => $departments);
         $this->Render($data);
     }

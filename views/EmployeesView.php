@@ -1,6 +1,3 @@
-<?php
-// print_r($data["departments"]);
-?>
 <p><a href="http://localhost:84">На главную</a></p>
 <div class="container__main">
     <div class="container__header">
@@ -13,11 +10,11 @@
                     <h1>Список всех сотрудников зооопарка 🐾</h1>
                     <div class="container__select__class">
                         <h2>выбрать параметры:</h2>
-                        <form action="http://localhost:84/employees/select" method="post">
+                        <form action="http://localhost:84/employees/list" method="get">
                             <div class="checkbox">
-                                <label for="spec_id">вабрать специализацию:</label>
-                                <select name="spec_id" id="spec_id">
-                                    <option value="all">показать все</option>
+                                <label for="spec_id">выбрать специализацию:</label>
+                                <select name="spec" id="spec_id">
+                                    <option value="0">показать все</option>
                                     <option value="1">зоология</option>
                                     <option value="2">орнитология</option>
                                     <option value="3">герпетология</option>
@@ -32,7 +29,6 @@
                 </div>
                 <button onclick="openEmployeeAddModal()">➕ Добавить сотрудника</button>
             </div>
-            <!-- </form> -->
             <?php
             $titles = [
                 "employee_id" => "номер",
@@ -53,9 +49,7 @@
                 <tbody>
                     <?php foreach ($data["employees"] as $keyArr => $valueArr): ?>
                         <tr>
-                            <?php //foreach ($valueArr as $key => $cell): 
-                            foreach ($valueArr as $key => $cell):
-                            ?>
+                            <?php foreach ($valueArr as $key => $cell): ?>
                                 <?php if ($key == "employee_id"): ?>
                                     <td> <?php $id = htmlspecialchars($cell); ?>
                                         <button onclick='openEditEmployeeModal(<?= json_encode($valueArr, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>)'>
@@ -65,7 +59,7 @@
                                 <?php elseif ($key == "employee_name"): ?>
                                     <?php $nameEmployee = htmlspecialchars($cell); ?>
                                     <td>
-                                        <?php echo "<a href='http://localhost:84/page/employee/$id'>$nameEmployee</a>" ?>
+                                        <?php echo "<a href='http://localhost:84/employees/employeePage/$id'>$nameEmployee</a>" ?>
                                     </td>
                                 <?php elseif ($key == "department_id"): ?>
                                     <?php $idDep = htmlspecialchars($cell); ?>
@@ -78,7 +72,7 @@
 
                                 <?php else: ?>
                                     <td>
-                                        <?php echo htmlspecialchars($cell); 
+                                        <?php echo htmlspecialchars($cell);
                                         ?>
                                     </td>
                                 <?php endif; ?>
@@ -91,6 +85,7 @@
     </div>
 </div>
 
+<!-- Модальное окно добавления сотрудника -->
 <div id="employeeAddModal" class="modal" style="display: none;">
     <div class="modal-content">
         <span class="close" onclick="closeEmployeeAddModal()">&times;</span>
@@ -112,27 +107,12 @@
                 <br>
                 <label for="department_id">Отдел:</label>
                 <select name="value[department_id]" id="department_id" required>
-                <?php foreach ($data["departments"] as $emp): ?>
-                    <option value="<?= htmlspecialchars($emp['department_id']) ?>">
-                        <?= htmlspecialchars($emp['department_name']) ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
-                <!-- <label for="department_id">Отдел:</label>
-                <select name="value[department_id]" id="department_id">
-                    <option value="0">Не выбран</option>
-                    <option value="1">Хищные млекопитающие</option>
-                    <option value="2">Травоядные млекопитающие</option>
-                    <option value="3">Приматы</option>
-                    <option value="4">Летающие птицы</option>
-                    <option value="5">Нелетающие птицы</option>
-                    <option value="6">Опасные рептилии</option>
-                    <option value="7">Неопасные рептилии</option>
-                    <option value="8">Земноводные</option>
-                    <option value="9">Насекомые</option>
-                    <option value="10">Морские рыбы</option>
-                    <option value="11">Пресноводные рыбы</option>
-                </select><br> -->
+                    <?php foreach ($data["departments"] as $emp): ?>
+                        <option value="<?= htmlspecialchars($emp['department_id']) ?>">
+                            <?= htmlspecialchars($emp['department_name']) ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
                 <input name="add_employee" type="submit" value="добавить">
             </div>
         </form>
@@ -161,12 +141,12 @@
                 </select><br>
                 <label for="edit_department_id">Отдел:</label>
                 <select name="value[department_id]" id="edit_department_id" required>
-                <?php foreach ($data["departments"] as $emp): ?>
-                    <option value="<?= htmlspecialchars($emp['department_id']) ?>">
-                        <?= htmlspecialchars($emp['department_name']) ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
+                    <?php foreach ($data["departments"] as $emp): ?>
+                        <option value="<?= htmlspecialchars($emp['department_id']) ?>">
+                            <?= htmlspecialchars($emp['department_name']) ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
                 <input type="submit" value="сохранить">
         </form>
         <h2>Удалить сотрудника из базы:</h2>
@@ -221,4 +201,5 @@
             modal.style.display = "none";
         }
     }
+
 </script>

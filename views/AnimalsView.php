@@ -1,10 +1,3 @@
-<?php
-// foreach ($data as $value) {
-//     print_r($value);
-//     // break;
-//     echo "\n";
-// }
-?>
 <p><a href="http://localhost:84">На главную</a></p>
 <div class="container__main">
     <div class="container__header">
@@ -17,12 +10,11 @@
                 <div class="container__table__options">
                     <h1>Список всех животных зооопарка 🐾</h1>
                     <div class="container__select__class">
-                        <!-- <h3>выбрать параметры:</h3> -->
-                        <form action="http://localhost:84/animals/select" method="post">
+                        <form action="http://localhost:84/animals/list" method="get">
                             <div class="checkbox">
                                 <label for="class_id">выбрать класс:</label>
-                                <select name="class_id" id="class_id">
-                                    <option value="all">показать все</option>
+                                <select name="class" id="class_id">
+                                    <option value="0">показать все</option>
                                     <option value="1">только рыбы</option>
                                     <option value="2">только земноводные</option>
                                     <option value="3">только рептилии</option>
@@ -66,7 +58,6 @@
                     <?php foreach ($data["animals"] as $keyArr => $valueArr): ?>
                         <tr>
                             <?php foreach ($valueArr as $key => $cell): ?>
-                                <!-- <td> -->
                                 <?php if ($key == "animal_id"): ?>
                                     <td>
                                         <?php $id = htmlspecialchars($cell) ?>
@@ -77,7 +68,7 @@
                                 <?php elseif ($key == "animal_name"): ?>
                                     <td>
                                         <?php $name = htmlspecialchars($cell); ?>
-                                    <?php echo "<a href='http://localhost:84/page/animal/$id'>$name</a>" ?>
+                                    <?php echo "<a href='http://localhost:84/animals/animalPage/$id'>$name</a>" ?>
                                     </td>
                                 <?php elseif ($key == "class_id" || $key == "birth_date" || $key == "conservation_status_id"):
                                     continue; ?>
@@ -95,7 +86,6 @@
                                         <?php echo htmlspecialchars($cell ?? ''); ?>
                                     </td>
                                 <?php endif; ?>
-                                <!-- </td> -->
                             <?php endforeach; ?>
                         </tr>
                     <?php endforeach; ?>
@@ -105,7 +95,8 @@
     </div>
 </div>
 
-<div id="addModal" class="modal__add" style="display:none;">
+<!-- Модальное окно добавления животного -->
+<div id="addModal" class="modal" style="display:none;">
     <div class="modal-content">
         <span class="close" onclick="closeAddModal()">&times;</span>
         <h2>добавить новое животное:</h2>
@@ -171,6 +162,7 @@
     </div>
 </div>
 
+<!-- Модальное окно редактирования животного -->
 <div id="editModal" class="modal" style="display:none;">
     <div class="modal-content">
         <span class="close-button">&times;</span>

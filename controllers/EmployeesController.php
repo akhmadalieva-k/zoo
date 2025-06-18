@@ -4,6 +4,9 @@ namespace controllers;
 
 use controllers\log\Logger;
 use models\EmployeesModel;
+use views\ViewBase;
+use Exception;
+use Error;
 
 class EmployeesController extends ControllerBase
 {
@@ -16,56 +19,94 @@ class EmployeesController extends ControllerBase
         $this->Model = new EmployeesModel();
     }
 
-    public function All() : void
+    public function List(): void
     {
-        $data["employees"] = $this->Model->GetAll();
-        $data["departments"] = $this->Model->GetDepartments();
-        $this->Render($data);
-    }
-
-    public function Select() : void
-    {
-        if($_POST["spec_id"] == "all"){
-            Header('Location: http://localhost:84/employees/all');
+        try {
+            if (!isset($_GET["spec"])) {
+                $data["employees"] = $this->Model->GetAll();
+                $data["departments"] = $this->Model->GetDepartments();
+                $this->Render($data);
+            } else {
+                if ($_GET["spec"] == 0) {
+                    Header('Location: http://localhost:84/employees/list');
+                } else {
+                    $data["employees"] = $this->Model->SelectSpec($_GET["spec"]);
+                    $this->Render($data);
+                }
+            }
+        } catch (Exception $ex) {
+            Logger::AddErrorLog("employeeError", $ex->getMessage());
+        } catch (Error $e) {
+            Logger::AddErrorLog("employeeError", $e->getMessage());
         }
-        else {
-        $data["employees"] = $this->Model->SelectSpec($_POST["spec_id"]);
-        $this->Render($data);
+    }
+
+    public function Add(): void
+    {
+        try {
+            $params = [
+                $_POST['value']['employee_name'] ?? '',
+                $_POST['value']['specialization_id'] ?? '',
+                $_POST['value']['department_id'] ?? ''
+            ];
+            if ($this->Model->Add($params)) {
+                Logger::AddLog("create employee");
+            };
+            Header('Location: http://localhost:84/employees/list');
+        } catch (Exception $ex) {
+            Logger::AddErrorLog("employeeError", $ex->getMessage());
+        } catch (Error $e) {
+            Logger::AddErrorLog("employeeError", $e->getMessage());
         }
     }
 
-    public function Add() : void
+    public function Update(): void
     {
-        // print_r($_POST);
-        $params = [
-            "employee_name" => $_POST['value']['employee_name'] ?? '',
-            "specialization_id" => $_POST['value']['specialization_id'] ?? '',
-            "department_id" => $_POST['value']['department_id'] ?? ''
-        ];
-        // print_r($params);
-        // exit;
-        if($this->Model->Add($params))
-        {
-            Logger::AddLog("create employee");
-        };
-        $this->All();
-    }
+        try {
+            $params = [
+                $_POST['value']['employee_name'] ?? '',
+                $_POST['value']['specialization_id'] ?? '',
+                $_POST['value']['department_id'] ?? '',
+                $_POST['value']['employee_id'] ?? null
+            ];
+            $employeeId = $_POST['value']['employee_id'];
+            $department = $_POST['value']['department_id'];
 
-    public function Update() : void
-    {
-        if($this->Model->Update($_POST["value"]))
-        {
+            $this->Model->Update($params, $employeeId, $department);
+
             Logger::AddLog("change employee");
+            Header('Location: http://localhost:84/employees/list');
+        } catch (Exception $ex) {
+            Logger::AddErrorLog("employeeError", $ex->getMessage());
+        } catch (Error $e) {
+            Logger::AddErrorLog("employeeError", $e->getMessage());
         }
-        Header('Location: http://localhost:84/employees/all');
     }
 
-    public function Delete() : void
+    public function Delete(): void
     {
-        if($this->Model->Delete($_POST["employee_id_to_delete"]))
-        {
-            Logger::AddLog("delete employee");
+        try {
+            if ($this->Model->DeleteEmployee($_POST["employee_id_to_delete"])) {
+                Logger::AddLog("delete employee");
+            }
+            Header('Location: http://localhost:84/employees/list');
+        } catch (Exception $ex) {
+            Logger::AddErrorLog("employeeError", $ex->getMessage());
+        } catch (Error $e) {
+            Logger::AddErrorLog("employeeError", $e->getMessage());
         }
-        Header('Location: http://localhost:84/employees/all');
+    }
+
+    public function EmployeePage(int $id): void
+    {
+        try {
+            $data["link"] = $this->Model->GetEmployeeLink($id);
+            $data["employee"] = $this->Model->GetEmployeeInfo($id);
+            ViewBase::Render("EmployeePageView.php", $data);
+        } catch (Exception $ex) {
+            Logger::AddErrorLog("employeeError", $ex->getMessage());
+        } catch (Error $e) {
+            Logger::AddErrorLog("employeeError", $e->getMessage());
+        }
     }
 }

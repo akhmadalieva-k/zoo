@@ -1,0 +1,5 @@
+17.06.25 12:40:08 Commands out of sync; you can't run this command now
+17.06.25 12:42:21 Commands out of sync; you can't run this command now
+17.06.25 15:01:09 models\AnimalsModel::GetAnimalInfo(): Return value must be of type array, null returned
+17.06.25 15:09:55 models\AnimalsModel::GetAnimalInfo(): Return value must be of type array, null returned
+17.06.25 15:09:58 models\AnimalsModel::GetAnimalInfo(): Return value must be of type array, null returned
